@@ -1,47 +1,47 @@
-# Sudoku Instance Generation - Spec Notes
+# Generazione di Istanze Sudoku - Note sulla Specifica
 
-## Project Text Checks
+## Verifiche sul Testo del Progetto
 
-Two points should be treated carefully before the implementation is finalized:
+Due punti vanno trattati con attenzione prima di finalizzare l'implementazione:
 
-1. The project text appears to contain a likely copy-paste error:
+1. Il testo del progetto sembra contenere un probabile errore di copia-incolla:
 
 > "Implement a MiniZinc model using linear constraints for capacity and cost."
 
-This sentence looks unrelated to Sudoku and seems more coherent with project 18 (Transit Line Frequency). It should not drive the modeling choices unless the professor explicitly confirms that some optimization term was intended.
+Questa frase sembra non avere relazione con Sudoku ed è molto più coerente con il progetto 18 (Transit Line Frequency). Non dovrebbe guidare le scelte di modellazione, a meno che il professore non confermi esplicitamente che fosse previsto qualche termine di ottimizzazione.
 
-2. The use of an external dataset should be clarified.
+2. L'uso di un dataset esterno va chiarito.
 
-If the project specification explicitly points to a dataset of complete Sudoku solutions, then it is reasonable to use it as an input source for puzzle generation. If instead the dataset is only suggested, then the report should explain why it was used and what its role is in the pipeline.
+Se la specifica del progetto indica esplicitamente un dataset di soluzioni complete di Sudoku, allora è ragionevole usarlo come sorgente di input per la generazione dei puzzle. Se invece il dataset è solo suggerito, allora nel report bisogna spiegare perché è stato usato e quale ruolo ha nella pipeline.
 
-## Reference Dataset
+## Dataset di Riferimento
 
-The current project text appears to point to the public Kaggle Sudoku Dataset:
+Il testo attuale del progetto sembra rimandare al Kaggle Sudoku Dataset pubblico:
 
-- https://www.kaggle.com/datasets/rohanrao/sudoku
+- Https://www.kaggle.com/datasets/rohanrao/sudoku
 
-It contains complete Sudoku solutions and can be used as the source of valid full grids from which puzzles can be derived. This avoids spending solver time only on generating new full grids and makes experiments more reproducible.
+Contiene soluzioni complete di Sudoku e può essere usato come sorgente di griglie complete valide da cui derivare i puzzle. Questo evita di spendere tempo del solver solo per generare nuove griglie complete e rende gli esperimenti più riproducibili.
 
-## Deliverables
+## Deliverable
 
-According to the current project text, the final delivery appears to be a single zip file containing:
+In base al testo attuale del progetto, la consegna finale sembra essere un unico file zip contenente:
 
-- one or more MiniZinc models
-- the orchestration script used to drive the generation pipeline
-- the dataset and the generated benchmark instances
-- the experimental results
-- a written report of 6 to 10 pages
+- Uno o più modelli MiniZinc
+- Lo script di orchestrazione usato per gestire la pipeline di generazione
+- Il dataset e le istanze di benchmark generate
+- I risultati sperimentali
+- Un report scritto di 6-10 pagine
 
-The report should describe the models, the implementation choices, the uniqueness strategy, the clue-removal strategy, and the experimental results.
+Il report dovrebbe descrivere i modelli, le scelte implementative, la strategia di unicità, la strategia di rimozione degli indizi e i risultati sperimentali.
 
-## Experimental Constraints
+## Vincoli Sperimentali
 
-The project specification appears to require:
+La specifica del progetto sembra richiedere:
 
-- uniqueness checks on generated puzzles
-- minimization of the number of clues
-- a comparison of different strategies
-- a time limit of 5 minutes per benchmark test
-- an analysis relating generation time to the number of remaining clues
+- Controlli di unicità sui puzzle generati
+- Minimizzazione del numero di indizi
+- Un confronto tra diverse strategie
+- Un limite di 5 minuti per ogni test di benchmark
+- Un'analisi che colleghi il tempo di generazione al numero di indizi rimanenti
 
-Before the final write-up, these points should be checked once more against the official PDF so the report can distinguish strict requirements from implementation choices.
+Prima della stesura finale, questi punti dovrebbero essere ricontrollati sul PDF ufficiale, così il report può distinguere chiaramente tra requisiti stretti e scelte implementative.

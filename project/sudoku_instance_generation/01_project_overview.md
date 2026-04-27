@@ -1,130 +1,130 @@
-# Sudoku Instance Generation
+# Generazione di Istanze Sudoku
 
-## Goal
+## Obiettivo
 
-The project focuses on modeling and generating Sudoku instances with Constraint Programming, using MiniZinc as the main language.
+Il progetto si concentra sulla modellazione e sulla generazione di istanze di Sudoku con Constraint Programming, usando MiniZinc come linguaggio principale.
 
-According to the project description currently available, the generated 9x9 instances must:
+In base alla descrizione del progetto attualmente disponibile, le istanze 9x9 generate devono:
 
-- have at least one valid solution
-- have exactly one admissible solution (uniqueness)
-- contain as few clues (pre-filled cells) as possible while preserving uniqueness
+- Avere almeno una soluzione valida
+- Avere esattamente una soluzione ammissibile (unicità)
+- Contenere il minor numero possibile di indizi iniziali (celle precompilate), mantenendo l'unicità
 
-The core idea is not only to solve a Sudoku grid, but to study how to:
+L'idea centrale non è solo risolvere una griglia Sudoku, ma studiare come:
 
-- generate a valid complete Sudoku solution
-- remove clues to obtain a puzzle
-- verify that the generated puzzle is still valid
-- enforce or test uniqueness of the solution
-- minimize the number of clues kept in the final instance
-- compare different modeling and search choices
+- Generare una soluzione completa valida di Sudoku
+- Rimuovere indizi per ottenere un puzzle
+- Verificare che il puzzle generato resti valido
+- Imporre o verificare l'unicità della soluzione
+- Minimizzare il numero di indizi mantenuti nell'istanza finale
+- Confrontare diverse scelte di modellazione e di ricerca
 
-## Why This Project Is Interesting
+## Perché Questo Progetto È Interessante
 
-This project is a good fit for the course because it combines:
+Questo progetto è molto adatto al corso perché combina:
 
-- classic CSP modeling
-- global constraints such as `alldifferent`
-- search strategy choices
-- propagation quality
-- generation instead of simple solving
-- an extra layer of difficulty given by uniqueness checking
+- Modellazione classica di CSP
+- Vincoli globali come `alldifferent`
+- Scelte sulle strategie di ricerca
+- Qualità della propagazione
+- Generazione, non solo semplice solving
+- Un livello ulteriore di difficoltà dato dal controllo di unicità
 
-It is therefore stronger than a basic Sudoku solver and gives enough material for both the implementation and the oral discussion.
+Per questo motivo è più ricco di un semplice solver di Sudoku e offre materiale sufficiente sia per l'implementazione sia per la discussione orale.
 
-## Main Technical Direction
+## Direzione Tecnica Principale
 
-The project can be developed in stages.
+Il progetto può essere sviluppato per fasi.
 
-### 1. Sudoku Solver
+### 1. Solver Sudoku
 
-First, build a clean MiniZinc model for solving Sudoku:
+Per prima cosa, bisogna costruire un modello MiniZinc pulito per risolvere Sudoku:
 
-- 9x9 grid of decision variables
-- domains `1..9`
-- `alldifferent` on rows
-- `alldifferent` on columns
-- `alldifferent` on each 3x3 block
+- Griglia 9x9 di variabili decisionali
+- Domini `1..9`
+- `alldifferent` sulle righe
+- `alldifferent` sulle colonne
+- `alldifferent` su ogni blocco 3x3
 
-This part serves as the foundation for all later work.
+Questa parte costituisce la base per tutto il lavoro successivo.
 
-### 2. Complete Grid Generation
+### 2. Generazione di Griglie Complete
 
-Once the solver is correct, valid complete Sudoku boards can be obtained in two ways:
+Una volta che il solver è corretto, le griglie complete valide di Sudoku possono essere ottenute in due modi:
 
-- generated directly by the solver
-- loaded from an external dataset of solved grids
+- Generate direttamente dal solver
+- Caricate da un dataset esterno di griglie già risolte
 
-Both approaches are reasonable. The second is usually better for experiments because it decouples puzzle generation from full-grid construction.
+Entrambi gli approcci sono ragionevoli. Il secondo di solito è migliore per gli esperimenti, perché separa la generazione del puzzle dalla costruzione della griglia completa.
 
-### 3. Puzzle Generation
+### 3. Generazione del Puzzle
 
-Starting from a valid complete grid, remove some values and keep the rest as clues.
+Partendo da una griglia completa valida, si rimuovono alcuni valori e si mantengono gli altri come indizi.
 
-The goal is to obtain a playable Sudoku instance, not only a solved board.
+L'obiettivo è ottenere un'istanza Sudoku giocabile, non solo una soluzione completa.
 
-### 4. Uniqueness Check
+### 4. Controllo di Unicità
 
-The most important advanced step is verifying that the generated puzzle has a unique solution.
+Il passaggio avanzato più importante è verificare che il puzzle generato abbia una soluzione unica.
 
-This is what makes the project significantly more interesting than standard Sudoku solving. It also gives a strong theoretical and practical point to discuss during the exam.
+È questo che rende il progetto significativamente più interessante del normale solving di Sudoku. Inoltre fornisce un punto teorico e pratico forte da discutere all'esame.
 
-Based on the current project text, a relevant goal is to evaluate different strategies for testing the uniqueness of the solution. The main approaches to compare are:
+In base al testo del progetto attualmente disponibile, un obiettivo rilevante è valutare diverse strategie per verificare l'unicità della soluzione. I principali approcci da confrontare sono:
 
-- Solve-and-block: find one solution, add a constraint that forbids it, search again. If the second search returns UNSAT, the puzzle is unique.
-- Solution counting: enumerate solutions with the solver flag for finding all solutions, stopping as soon as a second one is found.
-- Implicit reasoning: rely on propagation to argue uniqueness without full enumeration. This is sound only in restricted cases and is mainly worth discussing as a limitation.
+- Solve-and-block: si trova una soluzione, si aggiunge un vincolo che la proibisce, poi si cerca di nuovo. Se la seconda ricerca restituisce UNSAT, il puzzle è unico.
+- Conteggio delle soluzioni: si enumerano le soluzioni usando il flag del solver per trovare tutte le soluzioni, fermandosi non appena se ne trova una seconda.
+- Ragionamento implicito: si usa la propagazione per argomentare l'unicità senza enumerazione completa. Questo approccio è corretto solo in casi limitati ed è soprattutto interessante da discutere come limite.
 
-In practice, the project should rely on the first two approaches. The third one is mainly a theoretical discussion point.
+In pratica, il progetto dovrebbe basarsi sui primi due approcci. Il terzo è soprattutto un punto di discussione teorico.
 
-### 5. Clue Minimization
+### 5. Minimizzazione degli Indizi
 
-Once uniqueness can be checked, the workflow should aim at producing puzzles with as few clues as possible while keeping the solution unique. This part connects directly to the current reading of the project requirement:
+Una volta che l'unicità può essere verificata, il flusso di lavoro dovrebbe puntare a produrre puzzle con il minor numero possibile di indizi, mantenendo la soluzione unica. Questa parte si collega direttamente all'interpretazione attuale del requisito di progetto:
 
-- iteratively remove clues from a complete grid
-- after each removal, run the uniqueness check
-- accept the removal only if the puzzle is still uniquely solvable
-- compare different removal strategies (random order, symmetry-aware, density-aware)
+- Rimuovere iterativamente indizi da una griglia completa
+- Dopo ogni rimozione, eseguire il controllo di unicità
+- Accettare la rimozione solo se il puzzle resta risolvibile in modo univoco
+- Confrontare diverse strategie di rimozione (ordine casuale, attento alle simmetrie, attento alla densità)
 
-The final report should clearly relate the number of remaining clues to the time required to verify uniqueness.
+Nel report finale bisogna collegare chiaramente il numero di indizi rimanenti con il tempo necessario per verificare l'unicità.
 
-### 6. Experimental Comparison
+### 6. Confronto Sperimentale
 
-After the base version works, compare:
+Dopo che la versione base funziona, conviene confrontare:
 
-- different search annotations
-- different clue-removal strategies
-- different levels of redundancy in the model
-- runtime and solver behavior on multiple generated instances
-- time vs number of remaining clues, as required by the project specification
+- Diverse annotazioni di search
+- Diverse strategie di rimozione degli indizi
+- Diversi livelli di ridondanza nel modello
+- Tempi di esecuzione e comportamento del solver su più istanze generate
+- Tempo in funzione del numero di indizi rimanenti, come richiesto dalla specifica del progetto
 
-If the project text is confirmed as read, the benchmark should be run with a 5 minutes timeout per test.
+Se il testo del progetto viene confermato come letto correttamente, il benchmark dovrebbe essere eseguito con un timeout di 5 minuti per test.
 
-## Expected Deliverables
+## Deliverable Attesi
 
-The final delivery is a single zip file containing models, scripts, dataset, generated instances, results and a written report of 6 to 10 pages.
+La consegna finale consiste in un unico file zip contenente modelli, script, dataset, istanze generate, risultati e un report scritto di 6-10 pagine.
 
-See [03_spec_notes.md](03_spec_notes.md) for the full deliverables list and the open points still to be confirmed against the official project text.
+Per l'elenco completo dei deliverable e per i punti ancora da confermare rispetto al testo ufficiale del progetto, vedi [03_spec_notes.md](03_spec_notes.md).
 
-## Oral Exam Value
+## Valore per l'Orale
 
-This project is good for the oral exam because it allows discussion of:
+Questo progetto è molto adatto per l'esame orale perché permette di discutere:
 
-- CSP modeling choices
-- role of global constraints, in particular `alldifferent`
-- Régin's theorem and the filtering algorithm behind `alldifferent`
-- propagation and solver efficiency, including AC vs bounds consistency on Sudoku
-- search heuristics
-- difference between solving and generation
-- how uniqueness changes the problem structure
-- complexity remarks: NP-completeness of generalized Sudoku and the `#P`-complete nature of solution counting
+- Scelte di modellazione CSP
+- Ruolo dei vincoli globali, in particolare `alldifferent`
+- Teorema di Régin e algoritmo di filtering dietro `alldifferent`
+- Propagazione ed efficienza del solver, inclusi AC e bounds consistency su Sudoku
+- Euristiche di ricerca
+- Differenza tra solving e generation
+- Come l'unicità cambia la struttura del problema
+- Osservazioni di complessità: NP-completezza del Sudoku generalizzato e natura `#P`-completa del conteggio delle soluzioni
 
-In short, the project should be presented as a Constraint Programming project on Sudoku generation, not just on Sudoku solving.
+In sintesi, il progetto dovrebbe essere presentato come un progetto di Constraint Programming sulla generazione di Sudoku, non solo sul solving di Sudoku.
 
-## Related Notes
+## Note Correlate
 
-More detailed material is split into separate files:
+Il materiale più dettagliato è diviso nei seguenti file:
 
-- [02_todo.md](02_todo.md): implementation checklist and milestones
-- [03_spec_notes.md](03_spec_notes.md): notes about the official project text, dataset, deliverables, experimental constraints and assumptions
-- [04_architecture_and_risks.md](04_architecture_and_risks.md): architecture, workflow separation, uniqueness strategies and main technical risks
+- [02_todo.md](02_todo.md): checklist di implementazione e milestone
+- [03_spec_notes.md](03_spec_notes.md): note sul testo ufficiale del progetto, dataset, deliverable, vincoli sperimentali e assunzioni
+- [04_architecture_and_risks.md](04_architecture_and_risks.md): architettura, separazione del workflow, strategie di unicità e principali rischi tecnici

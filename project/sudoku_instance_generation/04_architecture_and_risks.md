@@ -1,68 +1,68 @@
-# Sudoku Instance Generation - Architecture And Risks
+# Generazione di Istanze Sudoku - Architettura e Rischi
 
-## Suggested Architecture
+## Architettura Consigliata
 
-A clean implementation can be split into the following parts:
+Un'implementazione pulita può essere divisa nelle seguenti parti:
 
-- one MiniZinc solver model for solving and validating Sudoku instances
-- one MiniZinc model or configuration for uniqueness tests
-- one orchestration script that removes clues and repeatedly invokes MiniZinc
-- one data folder containing complete solved grids and generated puzzles
-- one results folder containing timings, statistics, and plots
+- Un modello MiniZinc per risolvere e validare istanze Sudoku
+- Un modello MiniZinc o una configurazione dedicata ai test di unicità
+- Uno script di orchestrazione che rimuove indizi e invoca ripetutamente MiniZinc
+- Una cartella dati contenente griglie complete risolte e puzzle generati
+- Una cartella risultati contenente tempi, statistiche e grafici
 
-This separation is important because clue removal is procedural, while Sudoku feasibility and uniqueness are delegated to the CP solver.
+Questa separazione è importante perché la rimozione degli indizi è procedurale, mentre fattibilità e unicità del Sudoku vengono delegate al solver CP.
 
-## Full Grid Sources
+## Sorgenti delle Griglie Complete
 
-Once the solver is correct, valid complete Sudoku boards can be obtained in two ways:
+Una volta che il solver è corretto, le griglie complete valide di Sudoku possono essere ottenute in due modi:
 
-- generated directly by the solver
-- loaded from an external dataset of solved grids
+- Generate direttamente dal solver
+- Caricate da un dataset esterno di griglie già risolte
 
-Both approaches are reasonable. The second is usually better for experiments because it decouples puzzle generation from full-grid construction.
+Entrambi gli approcci sono ragionevoli. Il secondo di solito è migliore per gli esperimenti, perché separa la generazione del puzzle dalla costruzione della griglia completa.
 
-## Uniqueness Strategies
+## Strategie di Unicità
 
-The main approaches worth comparing are:
+I principali approcci che vale la pena confrontare sono:
 
-- solve-and-block: find one solution, add a constraint that forbids it, search again
-- solution counting: enumerate solutions and stop as soon as a second one is found
-- implicit reasoning: mainly useful as a theoretical limitation, not as the main implementation strategy
+- Solve-and-block: trovare una soluzione, aggiungere un vincolo che la proibisce, poi cercare di nuovo
+- Conteggio delle soluzioni: enumerare le soluzioni e fermarsi non appena se ne trova una seconda
+- Ragionamento implicito: utile soprattutto come limite teorico, non come strategia principale di implementazione
 
-In practice, the first two should drive the implementation.
+In pratica, l'implementazione dovrebbe basarsi sui primi due.
 
-## Main Risks
+## Rischi Principali
 
-The main technical risks are:
+I principali rischi tecnici sono:
 
-- spending too much time on full-grid generation when a dataset would be enough
-- mixing puzzle generation logic with the MiniZinc model instead of keeping a clear orchestration layer
-- making uniqueness checks too expensive by rerunning an inefficient base model
-- trying to optimize clue minimization too early, before the validation pipeline is stable
+- Spendere troppo tempo sulla generazione delle griglie complete quando un dataset sarebbe sufficiente
+- Mescolare la logica di generazione del puzzle con il modello MiniZinc invece di mantenere un chiaro livello di orchestrazione
+- Rendere i controlli di unicità troppo costosi rieseguendo un modello base inefficiente
+- Provare a ottimizzare la minimizzazione degli indizi troppo presto, prima che la pipeline di validazione sia stabile
 
-## Uniqueness Check Outcomes
+## Esiti del Controllo di Unicità
 
-Each uniqueness check can produce three outcomes that the orchestration layer must handle explicitly:
+Ogni controllo di unicità può produrre tre esiti che il livello di orchestrazione deve gestire esplicitamente:
 
-- the second search returns UNSAT within the timeout: the puzzle is unique
-- a second solution is found: the puzzle is not unique and the last clue removal must be reverted
-- the timeout fires before a verdict: the result is unknown
+- La seconda ricerca restituisce UNSAT entro il timeout: il puzzle è unico
+- Viene trovata una seconda soluzione: il puzzle non è unico e l'ultima rimozione di indizio deve essere annullata
+- Scatta il timeout prima di ottenere un verdetto: il risultato è sconosciuto
 
-The third case must not be silently treated as "unique", otherwise the pipeline can produce non-unique puzzles. A safe default is to revert the last removal when the result is unknown, and to record the event in the logs so the report can quantify how often it happened.
+Il terzo caso non deve essere trattato in silenzio come "unico", altrimenti la pipeline può produrre puzzle non unici. Una scelta prudente è annullare l'ultima rimozione quando il risultato è sconosciuto e registrare l'evento nei log, così nel report si può quantificare quante volte è successo.
 
-## Recommended Development Order
+## Ordine di Sviluppo Consigliato
 
-1. Get a correct solver.
-2. Get a correct uniqueness check.
-3. Build the clue-removal pipeline.
-4. Only then optimize clue count and benchmark performance.
+1. Ottenere un solver corretto.
+2. Ottenere un controllo di unicità corretto.
+3. Costruire la pipeline di rimozione degli indizi.
+4. Solo dopo ottimizzare il numero di indizi e le prestazioni dei benchmark.
 
-## Working Principle
+## Principio di Funzionamento
 
-The project should treat Sudoku generation as a hybrid workflow:
+Il progetto dovrebbe trattare la generazione di Sudoku come un workflow ibrido:
 
-- MiniZinc handles feasibility and uniqueness checks
-- an external script controls clue removal
-- experiments measure the effect of modeling and search choices
+- MiniZinc gestisce fattibilità e controlli di unicità
+- Uno script esterno controlla la rimozione degli indizi
+- Gli esperimenti misurano l'effetto delle scelte di modellazione e di ricerca
 
-That separation makes the project easier to debug, explain, and benchmark.
+Questa separazione rende il progetto più facile da fare debug, spiegare e benchmarkare.

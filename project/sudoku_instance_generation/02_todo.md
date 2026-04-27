@@ -1,121 +1,121 @@
-# Sudoku Instance Generation - To Do
+# Generazione di Istanze Sudoku - Cose da Fare
 
-## Preliminary Clarifications
+## Chiarimenti Preliminari
 
-- [ ] Email the professor to confirm the actual scope of point 1, since the official text contains a copy-paste error mentioning "linear constraints for capacity and cost"
-- [ ] Confirm whether the Kaggle dataset is required as the source of complete grids or can be replaced by self-generated full grids
+- [ ] Scrivere al professore per confermare l'effettivo significato del punto 1, dato che il testo ufficiale contiene un probabile errore di copia-incolla che menziona "linear constraints for capacity and cost"
+- [ ] Confermare se il dataset Kaggle è richiesto come sorgente delle griglie complete oppure se può essere sostituito da griglie complete autogenerate
 
-## Core Setup
+## Impostazione di Base
 
-- [ ] Decide the naming convention for MiniZinc models, data files, and report material
-- [ ] Collect any course examples that can be reused as a starting point
-- [ ] Copy the Sudoku project text from `Elly/00_introduction/projects.pdf` (project 19) into `spec/` so all assumptions remain traceable
-- [ ] Download the Kaggle Sudoku Dataset and store it under `data/raw/`
-- [ ] Write a small loader that reads complete solutions from the Kaggle dataset
-- [ ] Add a project-level `README.md` that documents how to reproduce the full pipeline
+- [ ] Decidere una convenzione di nomi per i modelli MiniZinc, i file dati e il materiale del report
+- [ ] Raccogliere eventuali esempi del corso che possano essere riutilizzati come punto di partenza
+- [ ] Copiare il testo del progetto Sudoku da `Elly/00_introduction/projects.pdf` (progetto 19) dentro `spec/`, così tutte le assunzioni restano tracciabili
+- [ ] Scaricare il Kaggle Sudoku Dataset e salvarlo in `data/raw/`
+- [ ] Scrivere un piccolo loader che legga le soluzioni complete dal Kaggle dataset
+- [ ] Aggiungere un `README.md` a livello di progetto che documenti come riprodurre l'intera pipeline
 
-## Folder Structure
+## Struttura delle Cartelle
 
-- [ ] Create `models/` for MiniZinc files
-- [ ] Create `spec/` for the official project text and related notes
-- [ ] Create `data/raw/` for the original Kaggle dataset
-- [ ] Create `data/solved/` for complete Sudoku grids extracted from the dataset
-- [ ] Create `data/generated/` for generated puzzles
-- [ ] Create `data/test/` for known Sudoku instances used to validate the solver
-- [ ] Create `scripts/` for orchestration code
-- [ ] Create `results/` for benchmarks, logs and figures
-- [ ] Create `report/` for the final 6-10 pages document
+- [ ] Creare `models/` per i file MiniZinc
+- [ ] Creare `spec/` per il testo ufficiale del progetto e le note collegate
+- [ ] Creare `data/raw/` per il Kaggle dataset originale
+- [ ] Creare `data/solved/` per le griglie Sudoku complete estratte dal dataset
+- [ ] Creare `data/generated/` per i puzzle generati
+- [ ] Creare `data/test/` per istanze Sudoku note usate per validare il solver
+- [ ] Creare `scripts/` per il codice di orchestrazione
+- [ ] Creare `results/` per benchmark, log e grafici
+- [ ] Creare `report/` per il documento finale di 6-10 pagine
 
 ## Solver
 
-- [ ] Write a base MiniZinc Sudoku solver
-- [ ] Model rows with `alldifferent`
-- [ ] Model columns with `alldifferent`
-- [ ] Model 3x3 blocks with `alldifferent`
-- [ ] Test the solver on known Sudoku instances
-- [ ] Add a clear output format for grids
+- [ ] Scrivere un solver Sudoku base in MiniZinc
+- [ ] Modellare le righe con `alldifferent`
+- [ ] Modellare le colonne con `alldifferent`
+- [ ] Modellare i blocchi 3x3 con `alldifferent`
+- [ ] Testare il solver su istanze Sudoku note
+- [ ] Aggiungere un formato di output chiaro per le griglie
 
-## Full Grid Generation
+## Generazione di Griglie Complete
 
-- [ ] Adapt the model so it can generate complete valid Sudoku solution grids
-- [ ] Produce a small set of sample full grids
-- [ ] Check that generated full grids are structurally correct
-- [ ] Decide whether generated full grids are only a fallback or part of the main pipeline
+- [ ] Adattare il modello in modo che possa generare griglie complete valide di Sudoku
+- [ ] Produrre un piccolo insieme di griglie complete di esempio
+- [ ] Verificare che le griglie complete generate siano corrette dal punto di vista strutturale
+- [ ] Decidere se le griglie complete generate servano solo come fallback oppure facciano parte della pipeline principale
 
-## Puzzle Generation
+## Generazione dei Puzzle
 
-- [ ] Define how clues are removed from a full grid
-- [ ] Implement a first simple clue-removal strategy
-- [ ] Produce sample incomplete puzzles
-- [ ] Verify that generated puzzles remain valid inputs for the solver
+- [ ] Definire come rimuovere gli indizi da una griglia completa
+- [ ] Implementare una prima strategia semplice di rimozione degli indizi
+- [ ] Produrre puzzle incompleti di esempio
+- [ ] Verificare che i puzzle generati restino input validi per il solver
 
-## Uniqueness
+## Unicità
 
-- [ ] Define how to test whether a generated puzzle has a unique solution
-- [ ] Implement a first uniqueness-check workflow based on solve-and-block
-- [ ] Implement an alternative uniqueness check based on solution counting (find first 2 solutions)
-- [ ] Document the limits of any implicit-reasoning approach for uniqueness, only as a discussion point
-- [ ] Separate clearly the solving step from the uniqueness-check step
-- [ ] Test the uniqueness check on multiple generated puzzles
-- [ ] Compare the uniqueness strategies in terms of runtime and reliability
+- [ ] Definire come verificare se un puzzle generato ha una soluzione unica
+- [ ] Implementare un primo workflow di controllo dell'unicità basato su solve-and-block
+- [ ] Implementare un controllo alternativo dell'unicità basato sul conteggio delle soluzioni (trovare al massimo le prime 2)
+- [ ] Documentare i limiti di eventuali approcci basati su ragionamento implicito, solo come punto di discussione
+- [ ] Separare chiaramente la fase di solving dalla fase di controllo dell'unicità
+- [ ] Testare il controllo di unicità su più puzzle generati
+- [ ] Confrontare le strategie di unicità in termini di tempo di esecuzione e affidabilità
 
-## Pipeline Orchestration
+## Orchestrazione della Pipeline
 
-- [ ] Write a Python script that drives the full generation pipeline
-- [ ] The script should: load a complete grid, remove clues, call MiniZinc for uniqueness, accept or revert each removal
-- [ ] Make the removal order pluggable so that different strategies can be tested
-- [ ] Make the MiniZinc solver and timeout configurable from the script
-- [ ] Log every accepted and rejected clue removal for debugging and later analysis
-- [ ] Save generated puzzles in a stable textual format
+- [ ] Scrivere uno script Python che gestisca l'intera pipeline di generazione
+- [ ] Lo script dovrà: caricare una griglia completa, rimuovere indizi, chiamare MiniZinc per il controllo di unicità, accettare o annullare ogni rimozione
+- [ ] Rendere l'ordine di rimozione configurabile, in modo da poter testare strategie diverse
+- [ ] Rendere configurabili dallo script il solver MiniZinc e il timeout
+- [ ] Registrare nei log ogni rimozione accettata e rifiutata, per debug e analisi successive
+- [ ] Salvare i puzzle generati in un formato testuale stabile
 
-## Clue Minimization
+## Minimizzazione degli Indizi
 
-- [ ] Implement a random clue-removal strategy as baseline
-- [ ] Implement a symmetry-aware clue-removal strategy
-- [ ] Implement a density-aware clue-removal strategy
-- [ ] Record the final number of remaining clues per generated instance
-- [ ] Produce a plot of time vs remaining clues, as required by the specification
-- [ ] Record how many uniqueness calls were needed per final instance
+- [ ] Implementare una strategia casuale di rimozione degli indizi come baseline
+- [ ] Implementare una strategia di rimozione attenta alle simmetrie
+- [ ] Implementare una strategia di rimozione attenta alla densità
+- [ ] Registrare il numero finale di indizi rimanenti per ogni istanza generata
+- [ ] Produrre un grafico del tempo in funzione degli indizi rimanenti, come richiesto dalla specifica
+- [ ] Registrare quante chiamate al controllo di unicità sono state necessarie per ogni istanza finale
 
-## Improvements
+## Miglioramenti
 
-- [ ] Try different search strategies
-- [ ] Test whether redundant constraints help performance
-- [ ] Compare different generation strategies
-- [ ] Evaluate how many clues can be removed while keeping uniqueness
-- [ ] Compare a plain model against a stronger model with explicit search annotations
+- [ ] Provare diverse strategie di ricerca
+- [ ] Testare se vincoli ridondanti aiutano le prestazioni
+- [ ] Confrontare diverse strategie di generazione
+- [ ] Valutare quanti indizi possano essere rimossi mantenendo l'unicità
+- [ ] Confrontare un modello semplice con un modello più forte che usa annotazioni di search esplicite
 
-## Experiments
+## Esperimenti
 
-- [ ] Prepare a benchmark set of generated puzzles starting from the Kaggle dataset
-- [ ] Run all experiments with a 5 minutes timeout per test, if that requirement is confirmed in the official text
-- [ ] Record runtimes and solver behavior
-- [ ] Compare at least two variants of the model or workflow
-- [ ] Summarize the main empirical findings
-- [ ] Separate clearly correctness experiments from performance experiments
+- [ ] Preparare un benchmark di puzzle generati a partire dal Kaggle dataset
+- [ ] Eseguire tutti gli esperimenti con timeout di 5 minuti per test, se questo requisito verrà confermato nel testo ufficiale
+- [ ] Registrare tempi di esecuzione e comportamento del solver
+- [ ] Confrontare almeno due varianti del modello o del workflow
+- [ ] Riassumere i principali risultati empirici
+- [ ] Separare chiaramente gli esperimenti di correttezza dagli esperimenti di performance
 
-## Report And Exam Preparation
+## Report e Preparazione all'Orale
 
-- [ ] Write a project report structure
-- [ ] Make sure the final report is between 6 and 10 pages, if that requirement is confirmed in the official text
-- [ ] Document the modeling choices
-- [ ] Document the uniqueness strategy and the comparison among the alternatives
-- [ ] Document the clue-removal strategies and the time vs clues analysis
-- [ ] Prepare a few representative examples to show at the oral exam
-- [ ] Prepare a short explanation of why this is more than a plain Sudoku solver
-- [ ] Review Régin's theorem and the filtering algorithm behind `alldifferent`
-- [ ] Review NP-completeness of generalized Sudoku and the `#P`-complete nature of solution counting
-- [ ] Review propagator strength: AC vs bounds consistency on Sudoku, as discussed in lectures 7, 10 and 11
+- [ ] Scrivere una struttura per il report di progetto
+- [ ] Verificare che il report finale sia di 6-10 pagine, se questo requisito verrà confermato nel testo ufficiale
+- [ ] Documentare le scelte di modellazione
+- [ ] Documentare la strategia di unicità e il confronto tra le alternative
+- [ ] Documentare le strategie di rimozione degli indizi e l'analisi tempo vs indizi
+- [ ] Preparare alcuni esempi rappresentativi da mostrare all'esame orale
+- [ ] Preparare una breve spiegazione del motivo per cui questo progetto è più di un semplice solver di Sudoku
+- [ ] Ripassare il teorema di Régin e l'algoritmo di filtering dietro `alldifferent`
+- [ ] Ripassare la NP-completezza del Sudoku generalizzato e la natura `#P`-completa del conteggio delle soluzioni
+- [ ] Ripassare la forza dei propagatori: AC vs bounds consistency su Sudoku, come discusso nelle lezioni 7, 10 e 11
 
-## Final Packaging
+## Confezionamento Finale
 
-- [ ] Collect models, scripts, dataset, generated instances, results and report into a single zip file
-- [ ] Verify that the zip is self-contained and that the pipeline can be reproduced from it
+- [ ] Raccogliere modelli, script, dataset, istanze generate, risultati e report in un unico file zip
+- [ ] Verificare che lo zip sia autosufficiente e che la pipeline possa essere riprodotta a partire da esso
 
-## Milestones
+## Milestone
 
-- [ ] Milestone 1: working Sudoku solver
-- [ ] Milestone 2: working uniqueness checker
-- [ ] Milestone 3: working clue-removal pipeline
-- [ ] Milestone 4: benchmarkable generator
-- [ ] Milestone 5: complete report and oral preparation
+- [ ] Milestone 1: solver Sudoku funzionante
+- [ ] Milestone 2: controllo di unicità funzionante
+- [ ] Milestone 3: pipeline di rimozione degli indizi funzionante
+- [ ] Milestone 4: generatore pronto per i benchmark
+- [ ] Milestone 5: report completo e preparazione all'orale
