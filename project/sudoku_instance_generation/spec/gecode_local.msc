@@ -1,0 +1,10 @@
+{
+  "id": "org.gecode.gecode",
+  "name": "Gecode",
+  "version": "6.2.0",
+  "description": "Gecode FlatZinc solver",
+  "executable": "fzn-gecode",
+  "tags": ["cp", "int", "float", "set", "gecode"],
+  "stdFlags": ["-a", "-n", "-p", "-r", "-s", "-t"],
+  "inputType": "FZN"
+}
