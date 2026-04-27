@@ -123,22 +123,72 @@ def count_solutions_python(grid: Grid, limit: int = 2) -> Tuple[int, Optional[Gr
     return found, first_solution
 
 
-def puzzle_status_python(grid: Grid) -> dict:
+def solve_excluding_python(grid: Grid, forbidden: Grid) -> Optional[Grid]:
+    work = copy_grid(grid)
+
+    def backtrack() -> bool:
+        cell = find_empty(work)
+        if cell is None:
+            if any(work[r][c] != forbidden[r][c] for r in range(9) for c in range(9)):
+                return True
+            return False
+        row, col = cell
+        for value in candidate_values(work, row, col):
+            work[row][col] = value
+            if backtrack():
+                return True
+            work[row][col] = 0
+        return False
+
+    return work if backtrack() else None
+
+
+def puzzle_status_python(grid: Grid, method: str = "counting") -> dict:
     start = time.time()
-    count, solution = count_solutions_python(grid, limit=2)
-    elapsed = time.time() - start
-    if count == 0:
-        status = "unsat"
-    elif count == 1:
-        status = "unique"
-    else:
-        status = "multiple"
-    return {
-        "status": status,
-        "solutions_found": count,
-        "elapsed_seconds": elapsed,
-        "solution": solution,
-    }
+    if method == "counting":
+        count, solution = count_solutions_python(grid, limit=2)
+        elapsed = time.time() - start
+        if count == 0:
+            status = "unsat"
+        elif count == 1:
+            status = "unique"
+        else:
+            status = "multiple"
+        return {
+            "status": status,
+            "solutions_found": count,
+            "elapsed_seconds": elapsed,
+            "solution": solution,
+            "method": "counting",
+        }
+    if method == "solve-and-block":
+        first = solve_python(grid)
+        if first is None:
+            return {
+                "status": "unsat",
+                "solutions_found": 0,
+                "elapsed_seconds": time.time() - start,
+                "solution": None,
+                "method": "solve-and-block",
+            }
+        second = solve_excluding_python(grid, first)
+        elapsed = time.time() - start
+        if second is None:
+            return {
+                "status": "unique",
+                "solutions_found": 1,
+                "elapsed_seconds": elapsed,
+                "solution": first,
+                "method": "solve-and-block",
+            }
+        return {
+            "status": "multiple",
+            "solutions_found": 2,
+            "elapsed_seconds": elapsed,
+            "solution": first,
+            "method": "solve-and-block",
+        }
+    raise ValueError(f"Metodo di unicità non supportato: {method}")
 
 
 def board_to_dzn(name: str, grid: Grid) -> str:
@@ -146,9 +196,14 @@ def board_to_dzn(name: str, grid: Grid) -> str:
     return f"{name} = array2d(1..9, 1..9, [{flat}]);\n"
 
 
-def run_minizinc(model: Path, dzn_text: str, timeout_seconds: Optional[int]) -> subprocess.CompletedProcess:
+def run_minizinc(
+    model: Path,
+    dzn_text: str,
+    timeout_seconds: Optional[int],
+    extra_flags: Optional[List[str]] = None,
+) -> subprocess.CompletedProcess:
     if shutil.which("minizinc") is None:
-        raise RuntimeError("Il comando 'minizinc' non e' disponibile nel PATH")
+        raise RuntimeError("Il comando 'minizinc' non è disponibile nel PATH")
     project_root = model.parents[1]
     solver_config = project_root / "spec" / "gecode_local.msc"
     tmp_dir = project_root / "results"
@@ -157,7 +212,10 @@ def run_minizinc(model: Path, dzn_text: str, timeout_seconds: Optional[int]) -> 
         handle.write(dzn_text)
         temp_dzn = handle.name
     try:
-        cmd = ["minizinc", "--solver", str(solver_config), str(model), temp_dzn]
+        cmd = ["minizinc", "--solver", str(solver_config)]
+        if extra_flags:
+            cmd.extend(extra_flags)
+        cmd.extend([str(model), temp_dzn])
         if timeout_seconds is not None:
             cmd.extend(["--time-limit", str(timeout_seconds * 1000)])
         return subprocess.run(
@@ -189,7 +247,34 @@ def parse_minizinc_grid(output: str) -> Optional[Grid]:
     return rows if len(rows) == 9 else None
 
 
-def puzzle_status_minizinc(project_root: Path, grid: Grid, timeout_seconds: Optional[int]) -> dict:
+def parse_minizinc_grids(output: str) -> List[Grid]:
+    grids: List[Grid] = []
+    current: List[List[int]] = []
+    for raw_line in output.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith("----------"):
+            if len(current) == 9:
+                grids.append(current)
+            current = []
+            continue
+        if line.startswith("==========") or "UNSATISFIABLE" in line or "UNKNOWN" in line or "ERROR" in line:
+            continue
+        try:
+            values = [int(token) for token in line.split()]
+        except ValueError:
+            continue
+        if len(values) == 9:
+            current.append(values)
+    if len(current) == 9:
+        grids.append(current)
+    return grids
+
+
+def puzzle_status_minizinc_solve_and_block(
+    project_root: Path, grid: Grid, timeout_seconds: Optional[int]
+) -> dict:
     start = time.time()
     solver_model = project_root / "models" / "sudoku_solver.mzn"
     proc = run_minizinc(solver_model, board_to_dzn("clues", grid), timeout_seconds)
@@ -201,6 +286,7 @@ def puzzle_status_minizinc(project_root: Path, grid: Grid, timeout_seconds: Opti
             "elapsed_seconds": elapsed,
             "stderr": proc.stderr.strip(),
             "solution": None,
+            "method": "solve-and-block",
         }
     solution = parse_minizinc_grid(proc.stdout)
     if solution is None:
@@ -210,6 +296,7 @@ def puzzle_status_minizinc(project_root: Path, grid: Grid, timeout_seconds: Opti
             "elapsed_seconds": elapsed,
             "stderr": proc.stderr.strip(),
             "solution": None,
+            "method": "solve-and-block",
         }
     non_unique_model = project_root / "models" / "sudoku_non_unique_check.mzn"
     dzn = board_to_dzn("clues", grid) + board_to_dzn("known_solution", solution)
@@ -226,7 +313,81 @@ def puzzle_status_minizinc(project_root: Path, grid: Grid, timeout_seconds: Opti
         "elapsed_seconds": time.time() - start,
         "solution": solution,
         "stderr": (proc.stderr + "\n" + second.stderr).strip(),
+        "method": "solve-and-block",
     }
+
+
+def puzzle_status_minizinc_counting(
+    project_root: Path, grid: Grid, timeout_seconds: Optional[int]
+) -> dict:
+    start = time.time()
+    solver_model = project_root / "models" / "sudoku_solver.mzn"
+    proc = run_minizinc(
+        solver_model,
+        board_to_dzn("clues", grid),
+        timeout_seconds,
+        extra_flags=["-a", "-n", "2"],
+    )
+    elapsed = time.time() - start
+    if proc.returncode != 0:
+        return {
+            "status": "unknown",
+            "solutions_found": 0,
+            "elapsed_seconds": elapsed,
+            "stderr": proc.stderr.strip(),
+            "solution": None,
+            "method": "counting",
+        }
+    solutions = parse_minizinc_grids(proc.stdout)
+    search_complete = "==========" in proc.stdout
+    if not solutions:
+        return {
+            "status": "unsat",
+            "solutions_found": 0,
+            "elapsed_seconds": elapsed,
+            "stderr": proc.stderr.strip(),
+            "solution": None,
+            "method": "counting",
+        }
+    if len(solutions) >= 2:
+        return {
+            "status": "multiple",
+            "solutions_found": 2,
+            "elapsed_seconds": elapsed,
+            "stderr": proc.stderr.strip(),
+            "solution": solutions[0],
+            "method": "counting",
+        }
+    if search_complete:
+        return {
+            "status": "unique",
+            "solutions_found": 1,
+            "elapsed_seconds": elapsed,
+            "stderr": proc.stderr.strip(),
+            "solution": solutions[0],
+            "method": "counting",
+        }
+    return {
+        "status": "unknown",
+        "solutions_found": 1,
+        "elapsed_seconds": elapsed,
+        "stderr": proc.stderr.strip(),
+        "solution": solutions[0],
+        "method": "counting",
+    }
+
+
+def puzzle_status_minizinc(
+    project_root: Path,
+    grid: Grid,
+    timeout_seconds: Optional[int],
+    method: str = "solve-and-block",
+) -> dict:
+    if method == "solve-and-block":
+        return puzzle_status_minizinc_solve_and_block(project_root, grid, timeout_seconds)
+    if method == "counting":
+        return puzzle_status_minizinc_counting(project_root, grid, timeout_seconds)
+    raise ValueError(f"Metodo di unicità non supportato: {method}")
 
 
 def choose_source_grid(path: Path, rng: random.Random) -> Grid:
@@ -268,6 +429,7 @@ def generate_puzzle(
     strategy: str,
     timeout_seconds: Optional[int],
     seed: int,
+    method: str = "counting",
 ) -> dict:
     rng = random.Random(seed)
     puzzle = copy_grid(source_grid)
@@ -290,7 +452,7 @@ def generate_puzzle(
         puzzle[row][col] = 0
         if mirror is not None:
             puzzle[mirror[0]][mirror[1]] = 0
-        status = evaluate_puzzle(project_root, puzzle, backend, timeout_seconds)
+        status = evaluate_puzzle(project_root, puzzle, backend, timeout_seconds, method=method)
         accepted = status["status"] == "unique"
         if not accepted:
             puzzle[row][col] = previous
@@ -311,6 +473,7 @@ def generate_puzzle(
         "seed": seed,
         "strategy": strategy,
         "backend": backend,
+        "method": method,
         "puzzle": puzzle,
         "solution": source_grid,
         "clues": clues,
@@ -320,19 +483,19 @@ def generate_puzzle(
     }
 
 
-def evaluate_puzzle(project_root: Path, grid: Grid, backend: str, timeout_seconds: Optional[int]) -> dict:
+def evaluate_puzzle(project_root: Path, grid: Grid, backend: str, timeout_seconds: Optional[int], method: str = "counting") -> dict:
     validate_grid(grid, allow_zero=True)
     if backend == "python":
-        return puzzle_status_python(grid)
+        return puzzle_status_python(grid, method=method)
     if backend == "minizinc":
-        return puzzle_status_minizinc(project_root, grid, timeout_seconds)
+        return puzzle_status_minizinc(project_root, grid, timeout_seconds, method=method)
     raise ValueError("Backend non supportato")
 
 
 def cmd_check(args: argparse.Namespace) -> int:
     payload = read_json(Path(args.input))
     grid = payload["grid"]
-    result = evaluate_puzzle(Path(args.project_root), grid, args.backend, args.timeout)
+    result = evaluate_puzzle(Path(args.project_root), grid, args.backend, args.timeout, method=args.method)
     print(json.dumps(result, indent=2))
     return 0 if result["status"] in {"unique", "multiple", "unsat"} else 1
 
@@ -346,9 +509,10 @@ def cmd_generate(args: argparse.Namespace) -> int:
         strategy=args.strategy,
         timeout_seconds=args.timeout,
         seed=args.seed,
+        method=args.method,
     )
     write_json(Path(args.output), result)
-    print(json.dumps({"output": args.output, "clues": result["clues"], "strategy": args.strategy}, indent=2))
+    print(json.dumps({"output": args.output, "clues": result["clues"], "strategy": args.strategy, "method": args.method}, indent=2))
     return 0
 
 
@@ -386,6 +550,7 @@ def build_parser() -> argparse.ArgumentParser:
     check_cmd = sub.add_parser("check")
     check_cmd.add_argument("--input", required=True)
     check_cmd.add_argument("--backend", choices=["python", "minizinc"], default="python")
+    check_cmd.add_argument("--method", choices=["counting", "solve-and-block"], default="counting")
     check_cmd.add_argument("--timeout", type=int, default=None)
     check_cmd.set_defaults(func=cmd_check)
 
@@ -394,6 +559,7 @@ def build_parser() -> argparse.ArgumentParser:
     gen_cmd.add_argument("--output", required=True)
     gen_cmd.add_argument("--backend", choices=["python", "minizinc"], default="python")
     gen_cmd.add_argument("--strategy", choices=["random", "symmetry", "density"], default="random")
+    gen_cmd.add_argument("--method", choices=["counting", "solve-and-block"], default="counting")
     gen_cmd.add_argument("--timeout", type=int, default=None)
     gen_cmd.add_argument("--seed", type=int, default=0)
     gen_cmd.set_defaults(func=cmd_generate)
