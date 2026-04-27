@@ -1,5 +1,7 @@
 # Progetto Sudoku Instance Generation
 
+Per una guida rapida visibile dalla root del repository su GitHub, vedi anche [../../README.md](../../README.md).
+
 Questa cartella contiene una base completa e operativa per il progetto di generazione di istanze Sudoku.
 
 ## Struttura
@@ -8,6 +10,7 @@ Questa cartella contiene una base completa e operativa per il progetto di genera
 - `02_todo.md`: checklist operativa
 - `03_spec_notes.md`: note sulla specifica
 - `04_architecture_and_risks.md`: architettura e rischi
+- `05_collaboration_guide.md`: guida passo-passo per chi clona il progetto
 - `models/`: modelli MiniZinc
 - `scripts/`: script di orchestrazione e benchmark
 - `data/raw/`: dati originali esterni
