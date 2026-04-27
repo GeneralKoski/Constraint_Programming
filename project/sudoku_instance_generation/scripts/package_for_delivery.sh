@@ -15,6 +15,13 @@ STAGE_DIR=".package_stage"
 rm -rf "$STAGE_DIR" "$ZIP_NAME"
 mkdir -p "$STAGE_DIR/$PROJECT_NAME"
 
+# Renderizza il PDF del report se possibile, in modo che lo zip lo contenga.
+if python3 scripts/render_report_pdf.py >/dev/null 2>&1; then
+  echo "Report PDF rigenerato in report/report.pdf"
+else
+  echo "Avviso: rendering PDF non disponibile, lo zip conterrà solo report.md"
+fi
+
 INCLUDE=(
   "01_project_overview.md"
   "02_todo.md"
