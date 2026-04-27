@@ -57,7 +57,7 @@
 - [x] Documentare i limiti di eventuali approcci basati su ragionamento implicito, solo come punto di discussione
 - [x] Separare chiaramente la fase di solving dalla fase di controllo dell'unicità
 - [x] Testare il controllo di unicità su più puzzle generati
-- [ ] Confrontare le strategie di unicità in termini di tempo di esecuzione e affidabilità
+- [x] Confrontare le strategie di unicità in termini di tempo di esecuzione e affidabilità
 
 ## Orchestrazione della Pipeline
 
@@ -74,16 +74,16 @@
 - [x] Implementare una strategia di rimozione attenta alle simmetrie
 - [x] Implementare una strategia di rimozione attenta alla densità
 - [x] Registrare il numero finale di indizi rimanenti per ogni istanza generata
-- [ ] Produrre un grafico del tempo in funzione degli indizi rimanenti, come richiesto dalla specifica
+- [x] Produrre un grafico del tempo in funzione degli indizi rimanenti, come richiesto dalla specifica
 - [x] Registrare quante chiamate al controllo di unicità sono state necessarie per ogni istanza finale
 
 ## Miglioramenti
 
 - [x] Provare diverse strategie di ricerca
-- [ ] Testare se vincoli ridondanti aiutano le prestazioni
+- [x] Testare se vincoli ridondanti aiutano le prestazioni
 - [x] Confrontare diverse strategie di generazione
-- [ ] Valutare quanti indizi possano essere rimossi mantenendo l'unicità
-- [ ] Confrontare un modello semplice con un modello più forte che usa annotazioni di search esplicite
+- [x] Valutare quanti indizi possano essere rimossi mantenendo l'unicità
+- [x] Confrontare un modello semplice con un modello più forte che usa annotazioni di search esplicite
 
 ## Esperimenti
 
@@ -98,19 +98,19 @@
 
 - [x] Scrivere una struttura per il report di progetto
 - [ ] Verificare che il report finale sia di 6-10 pagine, se questo requisito verrà confermato nel testo ufficiale
-- [ ] Documentare le scelte di modellazione
-- [ ] Documentare la strategia di unicità e il confronto tra le alternative
-- [ ] Documentare le strategie di rimozione degli indizi e l'analisi tempo vs indizi
-- [ ] Preparare alcuni esempi rappresentativi da mostrare all'esame orale
-- [ ] Preparare una breve spiegazione del motivo per cui questo progetto è più di un semplice solver di Sudoku
-- [ ] Ripassare il teorema di Régin e l'algoritmo di filtering dietro `alldifferent`
-- [ ] Ripassare la NP-completezza del Sudoku generalizzato e la natura `#P`-completa del conteggio delle soluzioni
-- [ ] Ripassare la forza dei propagatori: AC vs bounds consistency su Sudoku, come discusso nelle lezioni 7, 10 e 11
+- [x] Documentare le scelte di modellazione
+- [x] Documentare la strategia di unicità e il confronto tra le alternative
+- [x] Documentare le strategie di rimozione degli indizi e l'analisi tempo vs indizi
+- [x] Preparare alcuni esempi rappresentativi da mostrare all'esame orale
+- [x] Preparare una breve spiegazione del motivo per cui questo progetto è più di un semplice solver di Sudoku
+- [x] Ripassare il teorema di Régin e l'algoritmo di filtering dietro `alldifferent`
+- [x] Ripassare la NP-completezza del Sudoku generalizzato e la natura `#P`-completa del conteggio delle soluzioni
+- [x] Ripassare la forza dei propagatori: AC vs bounds consistency su Sudoku, come discusso nelle lezioni 7, 10 e 11
 
 ## Confezionamento Finale
 
-- [ ] Raccogliere modelli, script, dataset, istanze generate, risultati e report in un unico file zip
-- [ ] Verificare che lo zip sia autosufficiente e che la pipeline possa essere riprodotta a partire da esso
+- [x] Raccogliere modelli, script, dataset, istanze generate, risultati e report in un unico file zip
+- [x] Verificare che lo zip sia autosufficiente e che la pipeline possa essere riprodotta a partire da esso
 
 ## Milestone
 
@@ -118,4 +118,4 @@
 - [x] Milestone 2: controllo di unicità funzionante
 - [x] Milestone 3: pipeline di rimozione degli indizi funzionante
 - [x] Milestone 4: generatore pronto per i benchmark
-- [ ] Milestone 5: report completo e preparazione all'orale
+- [x] Milestone 5: report completo e preparazione all'orale
