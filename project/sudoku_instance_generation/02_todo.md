@@ -2,7 +2,8 @@
 
 ## Chiarimenti Preliminari
 
-- [ ] Scrivere al professore per confermare l'effettivo significato del punto 1, dato che il testo ufficiale contiene un probabile errore di copia-incolla che menziona "linear constraints for capacity and cost"
+- [x] Scrivere al professore per confermare l'effettivo significato del punto 1, dato che il testo ufficiale contiene un probabile errore di copia-incolla che menziona "linear constraints for capacity and cost"
+  Mail logistica inviata al Prof. Dal Palù: il progetto 19 è confermato come "assegnato", non serve prenotazione formale. Il prof ha invitato esplicitamente a scrivere per chiarimenti sulle specifiche, quindi la seconda mail tecnica sul punto 1 può partire.
 - [x] Confermare se il dataset Kaggle è richiesto come sorgente delle griglie complete oppure se può essere sostituito da griglie complete autogenerate
   Decisione adottata: Kaggle non è obbligatorio, ma viene usato come sorgente sperimentale principale per i benchmark; la generazione interna di griglie complete resta disponibile come fallback e verifica.
 

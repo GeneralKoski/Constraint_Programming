@@ -26,6 +26,10 @@ For experiments and for comparing the quality of the generated instances, use a 
 - Va minimizzato il numero di indizi
 - È richiesto un confronto sperimentale tra strategie
 
+## Conferma del docente
+
+Il Prof. Dal Palù ha confermato via email l'assegnazione del progetto 19 a Martin Trajkovski (matricola 397464). Non è prevista una prenotazione formale: la scelta è considerata effettiva da quel momento. Il docente ha invitato esplicitamente a scrivere in caso di dubbi sulle specifiche.
+
 ## Punto da verificare
 
 Il punto 1 sembra contenere un errore di copia-incolla:
