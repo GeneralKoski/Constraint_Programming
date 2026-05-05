@@ -15,28 +15,28 @@ Indice unico per la preparazione orale del progetto **Sudoku Instance Generation
 
 I due documenti centrali sono nel progetto:
 
-1. **[code_walkthrough.md](../project/sudoku_instance_generation/report/code_walkthrough.md)** — spiegazione completa di ogni file di codice (modelli MiniZinc, scripts Python, packaging). Per ogni componente: cosa fa, walkthrough commentato, punti da saper difendere.
+1. **[2_2_code_walkthrough.md](2_2_code_walkthrough.md)** — spiegazione completa di ogni file di codice (modelli MiniZinc, scripts Python, packaging). Per ogni componente: cosa fa, walkthrough commentato, punti da saper difendere.
 
-2. **[oral_theory_notes.md](../project/sudoku_instance_generation/report/oral_theory_notes.md)** — note di teoria del corso applicate al progetto. 13 sezioni: Régin, NP-completezza, #P-completezza, AC vs BC, strategie di unicità, search strategies, vincoli globali, reificazione, vincoli ridondanti, symmetry breaking, branch and bound, CSP formale, FAQ.
+2. **[3_3_oral_theory_notes.md](3_3_oral_theory_notes.md)** — note di teoria del corso applicate al progetto. 13 sezioni: Régin, NP-completezza, #P-completezza, AC vs BC, strategie di unicità, search strategies, vincoli globali, reificazione, vincoli ridondanti, symmetry breaking, branch and bound, CSP formale, FAQ.
 
-3. **[report.md](../project/sudoku_instance_generation/report/report.md)** — il report finale di consegna. Versione "narrativa" del progetto, da rileggere almeno una volta.
+3. **[4_report.md](4_report.md)** — il report finale di consegna. Versione "narrativa" del progetto, da rileggere almeno una volta.
 
 ## Piano di studio suggerito
 
 ### Giorno 1 — Codice
-- Leggere `code_walkthrough.md` da cima a fondo, aprendo i file effettivi quando serve un riscontro
+- Leggere `2_code_walkthrough.md` da cima a fondo, aprendo i file effettivi quando serve un riscontro
 - Provare i comandi di test del README per vedere il pipeline in azione
 - Tenere a mente: per ogni modello MiniZinc devi saper spiegare *perché* ogni vincolo è lì e *perché* quella search annotation
 
 ### Giorno 2 — Teoria
-- Leggere `oral_theory_notes.md` sezioni 1-5 (Régin, NP/#P, AC vs BC, unicità) — sono le più probabili
+- Leggere `3_oral_theory_notes.md` sezioni 1-5 (Régin, NP/#P, AC vs BC, unicità) — sono le più probabili
 - Approfondire 6-7 (search strategies, global constraints) — tipici da CP corso
 - Skim 8-12 (reificazione, ridondanti, symmetry, B&B, CSP formale) — meno probabili, ma utili come "carte" da giocare
 
 ### Giorno 3 — Demo + ripasso
-- Preparare la demo live (esempio in fondo a `code_walkthrough.md`)
+- Preparare la demo live (esempio in fondo a `2_code_walkthrough.md`)
 - Rileggere il report
-- Rispondere a voce alle FAQ in `oral_theory_notes.md` §13
+- Rispondere a voce alle FAQ in `3_oral_theory_notes.md` §13
 
 ## Topic checklist (da spuntare mentre studi)
 

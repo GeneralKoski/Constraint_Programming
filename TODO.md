@@ -4,11 +4,11 @@ Stato: progetto tecnicamente completo, manca solo la preparazione dell'orale.
 
 ## Da fare
 
-- [ ] Studiare il codice → `project/sudoku_instance_generation/report/code_walkthrough.md`
-- [ ] Studiare la teoria → `project/sudoku_instance_generation/report/oral_theory_notes.md`
-- [ ] Rileggere il report → `project/sudoku_instance_generation/report/report.md`
-- [ ] Provare la demo live (esempio in fondo al `code_walkthrough.md`)
-- [ ] Spuntare la checklist in `notes/03_exam_preparation.md`
+- [ ] Studiare il codice → `study/2_code_walkthrough.md`
+- [ ] Studiare la teoria → `study/3_oral_theory_notes.md`
+- [ ] Rileggere il report → `study/4_report.md`
+- [ ] Provare la demo live (esempio in fondo a `study/2_code_walkthrough.md`)
+- [ ] Spuntare la checklist in `study/1_exam_preparation.md`
 - [ ] Sostenere l'orale
 
 ## Opzionale
